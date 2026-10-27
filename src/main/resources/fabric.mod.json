@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "waypoint_compass",
+	"version": "${version}",
+	"name": "Waypoint Compass",
+	"description": "A craftable compass that lets you save, cycle, and track custom waypoints and death coordinates.",
+	"authors": [
+		"1111w",
+		"kamalds2"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/organization/1111w"
+	},
+	"license": "CC0-1.0",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.org1111w.waypointcompass.WaypointCompass"
+		],
+		"client": [
+			"com.org1111w.waypointcompass.client.WaypointCompassClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.20.1",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
