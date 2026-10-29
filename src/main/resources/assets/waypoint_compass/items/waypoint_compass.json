@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "waypoint_compass:item/waypoint_compass"
+  }
+}

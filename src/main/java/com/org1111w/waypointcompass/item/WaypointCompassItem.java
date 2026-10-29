@@ -33,6 +33,13 @@ public class WaypointCompassItem extends Item {
 		if (!level.isClientSide()) {
 			WaypointData data = stack.getOrDefault(ModComponents.WAYPOINTS, WaypointData.DEFAULT);
 
+			// Auto-sync death waypoint if available and not present
+			Waypoint lastDeath = com.org1111w.waypointcompass.WaypointCompass.LAST_DEATHS.get(player.getUUID());
+			if (lastDeath != null && data.waypoints().stream().noneMatch(w -> w.name().equals("☠️ Last Death"))) {
+				data = data.addWaypoint(lastDeath, com.org1111w.waypointcompass.config.ModConfig.INSTANCE.maxWaypoints);
+				stack.set(ModComponents.WAYPOINTS, data);
+			}
+
 			if (player.isShiftKeyDown()) {
 				// Shift + Right-Click: Cycle to the next waypoint
 				if (data.waypoints().isEmpty()) {

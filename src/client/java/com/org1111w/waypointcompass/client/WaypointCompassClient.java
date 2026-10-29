@@ -48,15 +48,16 @@ public class WaypointCompassClient implements ClientModInitializer {
 							double dist = active.distanceTo(client.player.getX(), client.player.getZ());
 							text = Component.literal("🧭 ")
 								.append(Component.literal("[" + active.name() + "] ").withStyle(ChatFormatting.AQUA))
-								.append(Component.literal(String.format("%.0fm", dist)).withStyle(ChatFormatting.GREEN));
+								.append(Component.literal(String.format("(%d, %d, %d) ", active.pos().getX(), active.pos().getY(), active.pos().getZ())).withStyle(ChatFormatting.YELLOW))
+								.append(Component.literal(String.format("• %.0fm", dist)).withStyle(ChatFormatting.GREEN));
 						}
 
 						int screenWidth = client.getWindow().getGuiScaledWidth();
 						int screenHeight = client.getWindow().getGuiScaledHeight();
 						int x = screenWidth / 2;
-						int y = screenHeight - 68; // Positioned right above hotbar & health
+						int y = client.player.isCreative() ? screenHeight - 38 : screenHeight - 54;
 
-						extractor.centeredText(client.font, text, x, y, 0xFFFFFF);
+						extractor.centeredText(client.font, text, x, y, 0xFFFFFFFF);
 					}
 				}
 			}

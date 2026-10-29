@@ -16,9 +16,14 @@ import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class WaypointCompass implements ModInitializer {
 	public static final String MOD_ID = "waypoint_compass";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Map<UUID, Waypoint> LAST_DEATHS = new ConcurrentHashMap<>();
 
 	@Override
 	public void onInitialize() {
@@ -33,24 +38,23 @@ public class WaypointCompass implements ModInitializer {
 				BlockPos deathPos = oldPlayer.blockPosition();
 				String dimension = oldPlayer.level().dimension().identifier().toString();
 				Waypoint deathWaypoint = new Waypoint("☠️ Last Death", deathPos, dimension, 0xFF5555);
+				LAST_DEATHS.put(newPlayer.getUUID(), deathWaypoint);
 
-				boolean added = false;
+				// Always notify the player in chat upon respawn with exact coordinates
+				newPlayer.sendSystemMessage(
+					Component.literal("☠️ Death location: ")
+						.withStyle(ChatFormatting.RED)
+						.append(Component.literal(deathPos.getX() + ", " + deathPos.getY() + ", " + deathPos.getZ()).withStyle(ChatFormatting.GOLD))
+						.append(Component.literal(" (" + dimension + ")").withStyle(ChatFormatting.GRAY))
+				);
+
+				// If compass is already in inventory (e.g. keepInventory), attach it immediately
 				for (int i = 0; i < newPlayer.getInventory().getContainerSize(); i++) {
 					ItemStack stack = newPlayer.getInventory().getItem(i);
 					if (stack.getItem() instanceof WaypointCompassItem) {
 						WaypointData data = stack.getOrDefault(ModComponents.WAYPOINTS, WaypointData.DEFAULT);
 						stack.set(ModComponents.WAYPOINTS, data.addWaypoint(deathWaypoint, ModConfig.INSTANCE.maxWaypoints));
-						added = true;
 					}
-				}
-
-				if (added) {
-					newPlayer.sendSystemMessage(
-						Component.literal("☠️ Death location saved to your Waypoint Compass! (")
-							.withStyle(ChatFormatting.RED)
-							.append(Component.literal(deathPos.getX() + ", " + deathPos.getY() + ", " + deathPos.getZ()).withStyle(ChatFormatting.GOLD))
-							.append(Component.literal(")"))
-					);
 				}
 			}
 		});
